@@ -1,6 +1,8 @@
-class TorchBlock(Block):
+from block import BlockType, Block
+
+class Torch(Block):
 	def __init__(self, coords: "Vec3", world: "World"):
-		super(BlockType.TORCH, coords, world)
+		super().__init__(BlockType.TORCH, coords, world)
 
 	def is_input_of(self, neighbor: "Block"):
 		match neighbor.type:
@@ -8,8 +10,7 @@ class TorchBlock(Block):
 				return neighbor.is_above(self)
 			case BlockType.DUST:
 				return True
-			case BlockType.REPEATER:
-			case BlockType.COMPARATOR:
+			case BlockType.REPEATER | BlockType.COMPARATOR:
 				return neighbor.is_facing_away(self)
 		return False
 

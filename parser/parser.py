@@ -1,10 +1,9 @@
 from functools import partial
-from enum import Enum
 
 class Parser:
 	def __init__(self, world: "World"):
 		self.world = world
-		self.graph = {}  # Maps UUIDs to blocks and their connections
+		self.graph = {}
 
 	def parse(self, start_block: "Block"):
 		queue = deque([start_block])

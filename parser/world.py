@@ -28,13 +28,30 @@ class Vec3:
 		return Vec3(-self.x, -self.y, -self.z)
 
 	def __eq__(self, other):
-		return self.x == other.x and self.y == other.y and self.z == other.z
+		return other != None and self.x == other.x and self.y == other.y and self.z == other.z
 
 	def __add__(self, other):
 		return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
 	
 	def __sub__(self, other):
 		return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
+
+	def __str__(self):
+		return f"{self.x}, {self.y}, {self.z}"
+
+	def __repr__(self):
+		return "(" + self.__str__() + ")"
+
+	@staticmethod
+	def from_cardinal(cardinal: str):
+		match cardinal:
+			case "east": return Vec3(1, 0, 0)
+			case "west": return Vec3(-1, 0, 0)
+			case "south": return Vec3(0, 0, 1)
+			case "north": return Vec3(0, 0, -1)
+			case "up": return Vec3(0, 1, 0)
+			case "down": return Vec3(0, -1, 0)
+		return None
 
 class World:
 	def __init__(self):
@@ -50,3 +67,38 @@ class World:
 					if coord.z < len(tmp2):
 						r.append(tmp2[coord.z])
 		return r
+
+	def set_block(self, block):
+		coords = block.coords
+		while len(self.blocks) <= coords.x:
+			self.blocks.append([])
+		while len(self.blocks[coords.x]) <= coords.y:
+			self.blocks[coords.x].append([])
+		while len(self.blocks[coords.x][coords.y]) <= coords.z:
+			self.blocks[coords.x][coords.y].append(None)
+
+		self.blocks[coords.x][coords.y][coords.z] = block
+
+	def __str__(self):
+		if not self.blocks:
+			return "Empty world"
+
+		max_x = len(self.blocks)
+		max_y = max(len(self.blocks[x]) for x in range(max_x)) if max_x > 0 else 0
+		max_z = max(len(self.blocks[x][y]) for x in range(max_x) for y in range(len(self.blocks[x]))) if max_y > 0 else 0
+
+		output = []
+		for y in range(max_y):
+			output.append(f"Y-Level {y}:")
+			for x in range(max_x):
+				row = []
+				for z in range(max_z):
+					if x < len(self.blocks) and y < len(self.blocks[x]) and z < len(self.blocks[x][y]):
+						block = self.blocks[x][y][z]
+						row.append(str(block.type.value) if block else "0")
+					else:
+						row.append("0")
+				output.append(" ".join(row))
+			output.append("")
+
+		return "\n".join(output)
