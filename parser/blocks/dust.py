@@ -16,7 +16,7 @@ class Dust(Block):
 
 	def is_output_of(self, neighbor: "Block"):
 		match neighbor.type:
-			case BlockType.SOLID | BlockType.DUST | lockType.TORCH:
+			case BlockType.SOLID | BlockType.DUST | BlockType.TORCH:
 				return True
 			case BlockType.REPEATER | BlockType.COMPARATOR:
 				return neighbor.is_facing(self)

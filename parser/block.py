@@ -14,9 +14,13 @@ class Block:
 		self.coords = coords
 		self.world = world
 		self.props = {}
+		self.uuid = hash(self)
 
 	def __str__(self):
 		return f"{self.type}, ({self.coords})"
+
+	def __hash__(self):
+		return hash(self.coords)
 
 	def with_props(self, props):
 		self.props = props

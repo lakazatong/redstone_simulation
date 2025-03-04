@@ -41,7 +41,10 @@ class Vec3:
 
 	def __repr__(self):
 		return "(" + self.__str__() + ")"
-
+	
+	def __hash__(self):
+		return hash((self.x, self.y, self.z))
+	
 	@staticmethod
 	def from_cardinal(cardinal: str):
 		match cardinal:
@@ -59,13 +62,13 @@ class World:
 
 	def get_neighbors(self, block):
 		r = []
-		for coord in block.props["coords"].neighbors():
+		for coord in block.coords.neighbors():
 			if coord.x < len(self.blocks):
 				tmp1 = self.blocks[coord.x]
 				if coord.y < len(tmp1):
 					tmp2 = tmp1[coord.y]
-					if coord.z < len(tmp2):
-						r.append(tmp2[coord.z])
+					if coord.z < len(tmp2) and (b := tmp2[coord.z]) != None:
+						r.append(b)
 		return r
 
 	def set_block(self, block):
@@ -102,3 +105,16 @@ class World:
 			output.append("")
 
 		return "\n".join(output)
+
+	def get_first_block(self):
+		for x in range(len(self.blocks)):
+			if not self.blocks[x]:
+				continue
+			for y in range(len(self.blocks[x])):
+				if not self.blocks[x][y]:
+					continue
+				for z in range(len(self.blocks[x][y])):
+					block = self.blocks[x][y][z] if z < len(self.blocks[x][y]) else None
+					if block:
+						return block
+		return None
